@@ -112,6 +112,8 @@ onl-force:
 distclean-onl:
 	sudo rm -rf $(ONL_DIR)
 
+onl-images:
+	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-2.0.0_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.	
 ########################################################################
 ##
 ##
