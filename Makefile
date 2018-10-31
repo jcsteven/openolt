@@ -58,10 +58,21 @@ CPPFLAGS += `pkg-config --cflags protobuf grpc`
 CXXFLAGS += -std=c++11 -fpermissive -Wno-literal-suffix
 LDFLAGS += -L/usr/local/lib `pkg-config --libs grpc++ grpc` -ldl
 
-prereq:
+prereq1:
 	sudo apt-get -q -y install git pkg-config build-essential autoconf libtool libgflags-dev libgtest-dev clang libc++-dev unzip docker.io
 	sudo apt-get install -y build-essential autoconf libssl-dev gawk debhelper dh-systemd init-system-helpers
 
+prereq2:
+	sudo apt-get install software-properties-common -y
+	sudo apt-get install gcc-4.9 g++-4.9 -y
+	sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 49 \
+	--slave /usr/bin/g++ g++ /usr/bin/g++-4.9 \
+	--slave /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-4.9 \
+	--slave /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-4.9 \
+	--slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-4.9 
+	
+	
+prereq3:	
 	# Install GRPC, libprotobuf and protoc
 	rm -rf $(GRPC_DST)
 	git clone -b $(GRPC_VER) $(GRPC_ADDR) $(GRPC_DST)
@@ -137,19 +148,19 @@ BAL_INC = -I$(BAL_DIR)/bal_release/src/common/os_abstraction \
 CXXFLAGS += $(BAL_INC) -I $(BAL_DIR)/lib/cmdline
 CXXFLAGS += -DBCMOS_MSG_QUEUE_DOMAIN_SOCKET -DBCMOS_MSG_QUEUE_UDP_SOCKET -DBCMOS_MEM_CHECK -DBCMOS_SYS_UNITTEST
 
-sdk: onl
+sdk:
 ifeq ("$(wildcard $(BAL_DIR))","")
 	mkdir $(BAL_DIR)
-	unzip download/$(BAL_ZIP) -d $(BAL_DIR)
-	cp download/$(SDK_ZIP) $(BCM_SDK)
+	unzip ~/broadcom/download/$(BAL_ZIP) -d $(BAL_DIR)
+	cp ~/broadcom/download/$(SDK_ZIP) $(BCM_SDK)
 	chmod -R 744 $(BAL_DIR)
-	cat download/$(ACCTON_PATCH) | patch -p1 -d $(BAL_DIR)
+	cat ~/edgecore/download/$(ACCTON_PATCH) | patch -p1 -d $(BAL_DIR)
 	mkdir -p $(MAPLE_KERNDIR)
 	ln -s $(ONL_KERNDIR)/linux-$(ONL_KERN_VER) $(MAPLE_KERNDIR)/linux-$(ONL_KERN_VER)
 	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/archives/linux-$(ONL_KERN_VER).tar.xz $(MAPLE_KERNDIR)/linux-$(ONL_KERN_VER).tar.xz
 	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/$(ONL_KERN_VER_MAJOR)/configs/x86_64-all/x86_64-all.config $(MAPLE_KERNDIR)/x86_64-all.config
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk_dir
-	cat download/$(OPENOLT_BAL_PATCH) | patch -p1 -d $(BAL_DIR)
+	cat ~/broadcom/download/$(OPENOLT_BAL_PATCH) | patch -p1 -d $(BAL_DIR)
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) switch_sdk_dir
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) switch_sdk
