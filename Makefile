@@ -205,7 +205,7 @@ OBJS = $(SRCS:.cc=.o)
 DEPS = $(SRCS:.cc=.d)
 .DEFAULT_GOAL := all
 all: $(BUILD_DIR)/openolt
-$(BUILD_DIR)/openolt: sdk protos $(OBJS)
+$(BUILD_DIR)/openolt: protos $(OBJS)
 	$(CXX) -pthread -L/usr/local/lib -L$(BALLIBDIR) $(OBJS) $(OPENOLT_API_LIB) /usr/local/lib/libprotobuf.a -o $@ -l$(BALLIBNAME) -lgrpc++ -lgrpc -lpthread -ldl
 	ln -sf $(PWD)/$(BAL_DIR)/bcm68620_release/$(DEVICE)/release/release_$(DEVICE)_V$(BAL_MAJOR_VER).$(ACCTON_VER).tar.gz $(BUILD_DIR)/.
 	ln -sf $(PWD)/$(BAL_DIR)/bcm68620_release/$(DEVICE)/release/broadcom/libbal_api_dist.so $(BUILD_DIR)/.
