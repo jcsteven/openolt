@@ -249,6 +249,6 @@ clean: protos-clean deb-cleanup
 	rm -f $(BUILD_DIR)/openolt.deb
 
 distclean:
-	rm -rf $(BUILD_DIR)
+	sudo rm -rf $(BUILD_DIR)
 
-.PHONY: onl sdk bal protos prereq
+.PHONY: onl sdk bal protos prereq1 prereq2 prereq3
