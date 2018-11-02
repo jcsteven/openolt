@@ -1,4 +1,4 @@
-asfvolt16 (2.6.0.1+edgecore-V201810150305) stable; urgency=high
+asfvolt16 (2.6.1.3+edgecore-V201810150305) stable; urgency=high
 
     * Based on code from SW-BCM68620_2_6_1_3.zip.
     * Merged the Accton's fixed done in ACCTON_BAL_2.4.7.12-V201712061142.patch.
