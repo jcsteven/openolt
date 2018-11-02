@@ -26,9 +26,9 @@ DEVICE = asfvolt16
 # sdk-all-<SDK_VER>.tar.gz - Broadcom Qumran SDK.
 # ACCTON_BAL_<BAL_VER>-<ACCTON_VER>.patch - Accton/Edgecore's patch.
 BAL_MAJOR_VER = 02.06
-BAL_VER = 2.6.0.1_github
+BAL_VER = 2.6.1.3
 SDK_VER = 6.5.7
-ACCTON_VER = 201808150305
+ACCTON_VER = 201810150305
 #
 # Version of Open Network Linux (ONL).
 ONL_KERN_VER_MAJOR = 4.14
