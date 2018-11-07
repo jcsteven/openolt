@@ -26,13 +26,13 @@ DEVICE ?= asfvolt16
 # sdk-all-<SDK_VER>.tar.gz - Broadcom Qumran SDK.
 # ACCTON_BAL_<BAL_VER>-<DEV_VER>.patch - Accton/Edgecore's patch.
 BAL_MAJOR_VER = 02.06
-BAL_VER = 2.6.0.1
+BAL_VER = 2.6.1.3
 SDK_VER = 6.5.7
-DEV_VER ?= 201805281625
+DEV_VER ?= 201810150305
 #
 # Version of Open Network Linux (ONL).
-ONL_KERN_VER_MAJOR = 3.7
-ONL_KERN_VER_MINOR = 10
+ONL_KERN_VER_MAJOR = 4.14
+ONL_KERN_VER_MINOR = 49
 #
 # Build directory
 BUILD_DIR = build
@@ -68,7 +68,7 @@ export CXX CXXFLAGS
 
 prereq1:
 	sudo apt-get -q -y install git pkg-config build-essential autoconf libtool libgflags-dev libgtest-dev clang libc++-dev unzip docker.io
-	sudo apt-get install -y build-essential autoconf libssl-dev gawk debhelper dh-systemd init-system-helpers
+	sudo apt-get install -y build-essential autoconf libssl-dev gawk debhelper dh-systemd init-system-helpers libelf-dev
 
 prereq2:
 	sudo apt-get install software-properties-common -y
@@ -112,7 +112,7 @@ ONL_DIR = $(BUILD_DIR)/$(ONL_REPO)
 onl:
 	if [ ! -d "$(ONL_DIR)/OpenNetworkLinux" ]; then \
 		mkdir -p $(ONL_DIR); \
-		git clone https://gerrit.opencord.org/$(ONL_REPO) $(ONL_DIR); \
+		git clone https://github.com/jcsteven/$(ONL_REPO) -b 2018-0830-b2 $(ONL_DIR); \
 		make -C $(ONL_DIR) $(DEVICE)-$(ONL_KERN_VER_MAJOR); \
 	fi;
 onl-force:
@@ -121,7 +121,7 @@ distclean-onl:
 	sudo rm -rf $(ONL_DIR)
 
 onl-images:
-	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-2.0.0_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.	
+	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-asxvolt16_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.	
 ########################################################################
 ##
 ##
@@ -133,7 +133,7 @@ SDK_ZIP = sdk-all-$(SDK_VER).tar.gz
 ACCTON_PATCH = ACCTON_BAL_$(BAL_VER)-V$(DEV_VER).patch
 OPENOLT_BAL_PATCH = OPENOLT_BAL_$(BAL_VER).patch
 BAL_DIR = $(BUILD_DIR)/$(DEVICE)-bal
-ONL_KERNDIR = $(PWD)/$(ONL_DIR)/OpenNetworkLinux/packages/base/amd64/kernels/kernel-$(ONL_KERN_VER_MAJOR)-x86-64-all/builds
+ONL_KERNDIR = $(PWD)/$(ONL_DIR)/OpenNetworkLinux/packages/base/amd64/kernels/kernel-$(ONL_KERN_VER_MAJOR)-lts-x86-64-all/builds/jessie
 MAPLE_KERNDIR = $(BAL_DIR)/bcm68620_release/$(DEVICE)/kernels
 BCM_SDK = $(BAL_DIR)/bal_release/3rdparty/bcm-sdk
 BALLIBDIR = $(BAL_DIR)/bal_release/build/core/src/apps/bal_api_dist_shared_lib
@@ -168,7 +168,7 @@ ifeq ("$(wildcard $(BAL_DIR))","")
 	mkdir -p $(MAPLE_KERNDIR)
 	ln -s $(ONL_KERNDIR)/linux-$(ONL_KERN_VER) $(MAPLE_KERNDIR)/linux-$(ONL_KERN_VER)
 	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/archives/linux-$(ONL_KERN_VER).tar.xz $(MAPLE_KERNDIR)/linux-$(ONL_KERN_VER).tar.xz
-	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/$(ONL_KERN_VER_MAJOR)/configs/x86_64-all/x86_64-all.config $(MAPLE_KERNDIR)/x86_64-all.config
+	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/$(ONL_KERN_VER_MAJOR)-lts/configs/x86_64-all/x86_64-all.config $(MAPLE_KERNDIR)/x86_64-all.config
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk_dir
 	cat ~/broadcom/download/$(OPENOLT_BAL_PATCH) | patch -p1 -d $(BAL_DIR)
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk
@@ -176,13 +176,13 @@ ifeq ("$(wildcard $(BAL_DIR))","")
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) switch_sdk
 	KERNDIR=$(ONL_KERNDIR)/linux-$(ONL_KERN_VER) BOARD=$(DEVICE) ARCH=x86_64 SDKBUILD=build_bcm_user make -C $(BCM_SDK)/build-$(DEVICE)/sdk-all-$(SDK_VER)/systems/linux/user/x86-generic_64-2_6
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) bal
-	echo 'auto_create_interface_tm=y' >> $(BAL_DIR)/bal_release/3rdparty/maple/cur/$(DEVICE)/board_files/broadcom/bal_config.ini
+	echo 'auto_create_interface_tm=y' >> $(BAL_DIR)/bal_release/3rdparty/bcm-sdk/rc/$(DEVICE)/board_files/broadcom/bal_config.ini
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) release_board
 endif
 
 bal: sdk
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) bal
-	echo 'auto_create_interface_tm=y' >> $(BAL_DIR)/bal_release/3rdparty/maple/cur/asfvolt16/board_files/broadcom/bal_config.ini
+	echo 'auto_create_interface_tm=y' >> $(BAL_DIR)/bal_release/3rdparty/bcm-sdk/rc/asfvolt16/board_files/broadcom/bal_config.ini
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) release_board
 
 bal-clean:
@@ -241,8 +241,8 @@ DEPS = $(SRCS:.cc=.d)
 all: $(BUILD_DIR)/openolt
 $(BUILD_DIR)/openolt: protos $(OBJS)
 	$(CXX) $(LDFLAGS) -L$(BALLIBDIR) $(OBJS) $(OPENOLT_API_LIB) $(LIBPROTOBUF_PATH)/libprotobuf.a -o $@ -l$(BALLIBNAME) $(shell pkg-config --libs protobuf grpc++ grpc)
-	ln -sf $(PWD)/$(BAL_DIR)/bcm68620_release/$(DEVICE)/release/release_$(DEVICE)_V$(BAL_MAJOR_VER).$(DEV_VER).tar.gz $(BUILD_DIR)/.
-	ln -sf $(PWD)/$(BAL_DIR)/bcm68620_release/$(DEVICE)/release/broadcom/libbal_api_dist.so $(BUILD_DIR)/.
+	ln -sf $(PWD)/$(BAL_DIR)/bal_release/3rdparty/bcm-sdk/rc/$(DEVICE)/release/release_$(DEVICE)_V$(BAL_MAJOR_VER).$(DEV_VER).tar.gz $(BUILD_DIR)/.
+	ln -sf $(PWD)/$(BAL_DIR)/bal_release/3rdparty/bcm-sdk/rc/$(DEVICE)/release/broadcom/libbal_api_dist.so $(BUILD_DIR)/.
 	ln -sf $(PWD)/$(BAL_DIR)/bal_release/build/core/src/apps/bal_core_dist/bal_core_dist $(BUILD_DIR)/.
 	ln -sf $(LIBGRPC_PATH)/libgrpc.so.6 $(BUILD_DIR)/libgrpc.so.6
 	ln -sf $(LIBGRPC_PATH)/libgrpc++.so.1 $(BUILD_DIR)/libgrpc++.so.1
