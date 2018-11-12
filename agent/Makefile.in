@@ -29,7 +29,7 @@ OPENOLTDEVICE ?= asfvolt16
 BAL_MAJOR_VER = 02.06
 BAL_VER = 2.6.0.1
 SDK_VER = 6.5.7
-DEV_VER ?= 201804301043
+DEV_VER ?= 201805281625
 #
 # Version of Open Network Linux (ONL).
 ONL_KERN_VER_MAJOR = 3.7
@@ -79,10 +79,10 @@ prereq2:
 	--slave /usr/bin/g++ g++ /usr/bin/g++-4.9 \
 	--slave /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-4.9 \
 	--slave /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-4.9 \
-	--slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-4.9 
-	
-	
-prereq3:	
+	--slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-4.9
+
+
+prereq3:
 	# Install GRPC, libprotobuf and protoc
 	rm -rf $(GRPC_DST)
 	git clone -b $(GRPC_VER) $(GRPC_ADDR) $(GRPC_DST)
@@ -123,7 +123,7 @@ distclean-onl:
 	sudo rm -rf $(ONL_DIR)
 
 onl-images:
-	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-2.0.0_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.	
+	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-2.0.0_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.
 ########################################################################
 ##
 ##
@@ -161,7 +161,7 @@ BAL_INC = -I$(BAL_DIR)/bal_release/src/common/os_abstraction \
 CXXFLAGS += $(BAL_INC) -I $(BAL_DIR)/lib/cmdline
 CXXFLAGS += -DBCMOS_MSG_QUEUE_DOMAIN_SOCKET -DBCMOS_MSG_QUEUE_UDP_SOCKET -DBCMOS_MEM_CHECK -DBCMOS_SYS_UNITTEST -DENABLE_LOG
 
-sdk: 
+sdk:
 ifeq ("$(wildcard $(BAL_DIR))","")
 	mkdir $(BAL_DIR)
 	unzip ~/broadcom/download/$(BAL_ZIP) -d $(BAL_DIR)
