@@ -124,6 +124,7 @@ BAL_ZIP = SW-BCM68620_$(subst .,_,$(BAL_VER)).zip
 SDK_ZIP = sdk-all-$(SDK_VER).tar.gz
 ACCTON_PATCH = ACCTON_BAL_$(BAL_VER)-V$(ACCTON_VER).patch
 OPENOLT_BAL_PATCH = OPENOLT_BAL_$(BAL_VER).patch
+OPENOLT_BAL_PATCH_P1 = OPENOLT_BAL_$(BAL_VER)-p1.patch
 BAL_DIR = $(BUILD_DIR)/$(DEVICE)-bal
 ONL_KERNDIR = $(PWD)/$(ONL_DIR)/OpenNetworkLinux/packages/base/amd64/kernels/kernel-$(ONL_KERN_VER_MAJOR)-lts-x86-64-all/builds/jessie
 MAPLE_KERNDIR = $(BAL_DIR)/bcm68620_release/$(DEVICE)/kernels
@@ -163,6 +164,7 @@ ifeq ("$(wildcard $(BAL_DIR))","")
 	ln -s $(ONL_DIR)/OpenNetworkLinux/packages/base/any/kernels/$(ONL_KERN_VER_MAJOR)-lts/configs/x86_64-all/x86_64-all.config $(MAPLE_KERNDIR)/x86_64-all.config
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk_dir
 	cat ~/broadcom/download/$(OPENOLT_BAL_PATCH) | patch -p1 -d $(BAL_DIR)
+	cat ~/broadcom/download/$(OPENOLT_BAL_PATCH_P1) | patch -p1 -d $(BAL_DIR)
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) maple_sdk
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) switch_sdk_dir
 	make -C $(BAL_DIR)/bal_release BOARD=$(DEVICE) switch_sdk
