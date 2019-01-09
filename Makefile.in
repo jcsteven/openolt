@@ -77,10 +77,10 @@ prereq2:
 	--slave /usr/bin/g++ g++ /usr/bin/g++-4.9 \
 	--slave /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-4.9 \
 	--slave /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-4.9 \
-	--slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-4.9 
-	
-	
-prereq3:	
+	--slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-4.9
+
+
+prereq3:
 	# Install GRPC, libprotobuf and protoc
 	rm -rf $(GRPC_DST)
 	git clone -b $(GRPC_VER) $(GRPC_ADDR) $(GRPC_DST)
@@ -121,7 +121,7 @@ distclean-onl:
 	sudo rm -rf $(ONL_DIR)
 
 onl-images:
-	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-asxvolt16_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.	
+	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-*_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.
 ########################################################################
 ##
 ##
