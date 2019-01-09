@@ -113,7 +113,7 @@ distclean-onl:
 	sudo rm -rf $(ONL_DIR)
 
 onl-images:
-	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-asxvolt16_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.
+	cp $(ONL_DIR)/OpenNetworkLinux/RELEASE/jessie/amd64/ONL-*_ONL-OS_*_AMD64_INSTALLED_INSTALLER ${BUILD_DIR}/.
 ########################################################################
 ##
 ##
