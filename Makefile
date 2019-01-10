@@ -104,7 +104,7 @@ ONL_DIR = $(BUILD_DIR)/$(ONL_REPO)
 onl:
 	if [ ! -d "$(ONL_DIR)/OpenNetworkLinux" ]; then \
 		mkdir -p $(ONL_DIR); \
-		git clone https://github.com/jcsteven/$(ONL_REPO) -b 2018-0830-b2 $(ONL_DIR); \
+		git clone https://github.com/jcsteven/$(ONL_REPO) -b ONL-2019-0103 $(ONL_DIR); \
 		make -C $(ONL_DIR) $(DEVICE)-$(ONL_KERN_VER_MAJOR); \
 	fi;
 onl-force:
